@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { 
   Lock, Mail, User as UserIcon, Sparkles, Heart, Bell, 
   Trash2, ArrowRight, UserCheck, ShieldCheck, ShoppingBag
