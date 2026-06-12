@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { 
   Sparkles, ShieldCheck, ShoppingBag, Plus, Trash2, Edit2, 
   BarChart3, PieChart as PieIcon, LineChart as LineIcon, X, CheckSquare, Eye
