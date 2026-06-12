@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { 
@@ -10,7 +10,7 @@ import {
 import { Product } from "@/types";
 import { useCurrency } from "@/hooks/use-currency";
 
-export default function SearchPage() {
+function SearchContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { formatPrice } = useCurrency();
@@ -514,5 +514,20 @@ export default function SearchPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function SearchPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-[#050506] text-white">
+        <div className="animate-pulse flex items-center gap-2">
+          <Sparkles className="text-luxury-gold animate-spin" size={20} />
+          <span className="font-serif tracking-wider text-sm text-neutral-400">LOADING SEARCH PLATFORM...</span>
+        </div>
+      </div>
+    }>
+      <SearchContent />
+    </Suspense>
   );
 }

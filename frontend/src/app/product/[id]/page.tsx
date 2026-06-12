@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { 
   Sparkles, Heart, Bell, ShoppingBag, ShieldCheck, 
-  ArrowRight, ExternalLink, Calendar, Plus, MessageSquarePlus, Star
+  ArrowRight, ExternalLink, Calendar, Plus, MessageSquarePlus, Star, X
 } from "lucide-react";
 import { 
   LineChart, Line, XAxis, YAxis, CartesianGrid, 
