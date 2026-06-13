@@ -64,6 +64,8 @@ class ProductPriceBase(BaseModel):
     in_stock: bool
     product_url: str
     affiliate_url: Optional[str] = None
+    offer_start: Optional[datetime] = None
+    offer_end: Optional[datetime] = None
 
 class ProductPriceResponse(ProductPriceBase):
     id: int
@@ -157,6 +159,8 @@ class ProductUpdate(BaseModel):
 class AlertCreate(BaseModel):
     product_id: int
     target_price: float
+    notify_offer_start: Optional[bool] = False
+    notify_offer_end: Optional[bool] = False
 
 class AlertResponse(BaseModel):
     id: int
@@ -164,6 +168,8 @@ class AlertResponse(BaseModel):
     target_price: float
     is_active: bool
     created_at: datetime
+    notify_offer_start: bool
+    notify_offer_end: bool
     product: ProductResponse
 
     class Config:

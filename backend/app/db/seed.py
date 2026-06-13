@@ -499,6 +499,8 @@ def seed_db():
             in_stock = random.choice([True, True, True, False]) # 75% in-stock rate
             
             aff_url = get_affiliate_url(store, product.title)
+            o_start = datetime.utcnow() - timedelta(days=random.randint(1, 2))
+            o_end = datetime.utcnow() + timedelta(hours=random.randint(2, 36), minutes=random.randint(0, 59))
             p_price = ProductPrice(
                 product_id=product.id,
                 store_name=store,
@@ -506,7 +508,9 @@ def seed_db():
                 original_price=original_price,
                 in_stock=in_stock,
                 product_url=aff_url,
-                affiliate_url=aff_url
+                affiliate_url=aff_url,
+                offer_start=o_start,
+                offer_end=o_end
             )
             db.add(p_price)
             prices.append(p_price)

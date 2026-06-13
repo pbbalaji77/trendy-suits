@@ -106,6 +106,25 @@ export default function UserDashboard() {
         setWishlist(defaultWish);
         window.localStorage.setItem("wishlist", JSON.stringify(defaultWish));
       }
+
+      // Load local reminders items
+      const localReminders = window.localStorage.getItem("reminders");
+      if (localReminders) {
+        try {
+          const parsedReminders = JSON.parse(localReminders);
+          setAlerts(prev => {
+            const merged = [...prev];
+            parsedReminders.forEach((r: any) => {
+              if (!merged.some(m => m.id === r.id || (m.product_id === r.product_id && m.target_price === r.target_price && m.notify_offer_start === r.notify_offer_start && m.notify_offer_end === r.notify_offer_end))) {
+                merged.push(r);
+              }
+            });
+            return merged;
+          });
+        } catch (e) {
+          console.warn("Could not read local reminders", e);
+        }
+      }
     }
     setLoading(false);
   };
@@ -116,7 +135,27 @@ export default function UserDashboard() {
         headers: { "Authorization": `Bearer ${token}` }
       });
       if (response.ok) {
-        setAlerts(await response.json());
+        const apiAlerts = await response.json();
+        setAlerts(apiAlerts);
+        
+        // Load local reminders items to merge with API alerts
+        const localReminders = window.localStorage.getItem("reminders");
+        if (localReminders) {
+          try {
+            const parsedReminders = JSON.parse(localReminders);
+            setAlerts(prev => {
+              const merged = [...prev];
+              parsedReminders.forEach((r: any) => {
+                if (!merged.some(m => m.id === r.id || (m.product_id === r.product_id && m.target_price === r.target_price))) {
+                  merged.push(r);
+                }
+              });
+              return merged;
+            });
+          } catch (e) {
+            console.warn("Could not read local reminders", e);
+          }
+        }
       }
     } catch (err) {
       console.warn("Could not load price alerts.", err);
@@ -194,6 +233,22 @@ export default function UserDashboard() {
 
   const handleDeleteAlert = async (alertId: number) => {
     const token = window.localStorage.getItem("token");
+    
+    // Always simulate deleting locally to update UI immediately
+    setAlerts(prev => prev.filter(a => a.id !== alertId));
+    
+    // Clear from local reminders
+    const localAlerts = window.localStorage.getItem("reminders");
+    if (localAlerts) {
+      try {
+        const parsed = JSON.parse(localAlerts);
+        const filtered = parsed.filter((r: any) => r.id !== alertId);
+        window.localStorage.setItem("reminders", JSON.stringify(filtered));
+      } catch (e) {
+        console.warn("Could not delete local reminder", e);
+      }
+    }
+
     if (!token) return;
 
     try {
@@ -201,10 +256,8 @@ export default function UserDashboard() {
         method: "DELETE",
         headers: { "Authorization": `Bearer ${token}` }
       });
-      setAlerts(prev => prev.filter(a => a.id !== alertId));
     } catch {
-      // Offline fallback deletion simulation
-      setAlerts(prev => prev.filter(a => a.id !== alertId));
+      console.warn("API alert delete failed, kept local deletion simulation.");
     }
   };
 
@@ -400,6 +453,20 @@ export default function UserDashboard() {
                       <p className="text-[10px] text-neutral-400">
                         Current: <strong className="text-neutral-800 dark:text-white">{formatPrice(a.product.base_price)}</strong> • Target: <strong className="text-luxury-gold">{formatPrice(a.target_price)}</strong>
                       </p>
+                      {(a.notify_offer_start || a.notify_offer_end) && (
+                        <div className="flex gap-1.5 mt-1">
+                          {a.notify_offer_start && (
+                            <span className="px-1.5 py-0.5 rounded text-[8px] font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                              🔔 Start Alert
+                            </span>
+                          )}
+                          {a.notify_offer_end && (
+                            <span className="px-1.5 py-0.5 rounded text-[8px] font-semibold bg-luxury-gold/10 text-luxury-gold border border-luxury-gold/20">
+                              🔔 End Alert
+                            </span>
+                          )}
+                        </div>
+                      )}
                     </div>
                     
                     <div className="flex gap-2 items-center">

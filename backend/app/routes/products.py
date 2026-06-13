@@ -332,6 +332,8 @@ def generate_dynamic_products(q: str, db: Session) -> List[Product]:
             store_price = round(base_original_price * (1 - discount_pct), 2)
             
             aff_url = get_affiliate_url(store, p.title)
+            o_start = datetime.utcnow() - timedelta(days=random.randint(1, 2))
+            o_end = datetime.utcnow() + timedelta(hours=random.randint(2, 36), minutes=random.randint(0, 59))
             p_price = ProductPrice(
                 product_id=p.id,
                 store_name=store,
@@ -339,7 +341,9 @@ def generate_dynamic_products(q: str, db: Session) -> List[Product]:
                 original_price=base_original_price,
                 in_stock=True,
                 product_url=aff_url,
-                affiliate_url=aff_url
+                affiliate_url=aff_url,
+                offer_start=o_start,
+                offer_end=o_end
             )
             db.add(p_price)
             prices.append(p_price)

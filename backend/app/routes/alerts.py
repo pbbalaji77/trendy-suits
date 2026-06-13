@@ -34,8 +34,10 @@ def create_price_alert(
         Alert.is_active == True
     ).first()
     if existing:
-        # Update target price instead of creating double
+        # Update target price and settings instead of creating double
         existing.target_price = alert_in.target_price
+        existing.notify_offer_start = alert_in.notify_offer_start
+        existing.notify_offer_end = alert_in.notify_offer_end
         db.commit()
         db.refresh(existing)
         return existing
@@ -44,7 +46,9 @@ def create_price_alert(
         user_id=current_user.id,
         product_id=alert_in.product_id,
         target_price=alert_in.target_price,
-        is_active=True
+        is_active=True,
+        notify_offer_start=alert_in.notify_offer_start,
+        notify_offer_end=alert_in.notify_offer_end
     )
     db.add(alert)
     db.commit()

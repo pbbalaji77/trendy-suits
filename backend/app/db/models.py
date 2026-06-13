@@ -75,6 +75,8 @@ class ProductPrice(Base):
     product_url = Column(String, nullable=False)
     affiliate_url = Column(String, nullable=True)
     last_updated = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    offer_start = Column(DateTime, nullable=True)
+    offer_end = Column(DateTime, nullable=True)
 
     product = relationship("Product", back_populates="prices")
 
@@ -98,6 +100,8 @@ class Alert(Base):
     target_price = Column(Float, nullable=False)
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime, default=datetime.utcnow)
+    notify_offer_start = Column(Boolean, default=False)
+    notify_offer_end = Column(Boolean, default=False)
 
     user = relationship("User", back_populates="alerts")
     product = relationship("Product", back_populates="alerts")

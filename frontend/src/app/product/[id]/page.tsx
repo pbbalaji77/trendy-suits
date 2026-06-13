@@ -98,6 +98,8 @@ export default function ProductComparisonPage() {
   const [showAlertModal, setShowAlertModal] = useState(false);
   const [alertTargetPrice, setAlertTargetPrice] = useState("");
   const [alertMessage, setAlertMessage] = useState("");
+  const [notifyOfferStart, setNotifyOfferStart] = useState(false);
+  const [notifyOfferEnd, setNotifyOfferEnd] = useState(false);
 
   // Review form state
   const [newReviewTitle, setNewReviewTitle] = useState("");
@@ -153,13 +155,13 @@ export default function ProductComparisonPage() {
           brand: { id: 1, name: "Gucci", logo_url: "" },
           category: { id: 1, name: "Bags", slug: "bags-handbags" },
           prices: [
-            { id: 1, product_id: 1, store_name: "Amazon", price: 1850.00, original_price: 2500.00, in_stock: true, product_url: "https://www.amazon.in/s?k=Gucci+GG+Marmont+Shoulder+Bag&tag=trendysuits-21", affiliate_url: "https://www.amazon.in/s?k=Gucci+GG+Marmont+Shoulder+Bag&tag=trendysuits-21", last_updated: "" },
-            { id: 2, product_id: 1, store_name: "Flipkart", price: 1950.00, original_price: 2500.00, in_stock: true, product_url: "https://www.flipkart.com/search?q=Gucci+GG+Marmont+Shoulder+Bag&affid=trendysuits", affiliate_url: "https://www.flipkart.com/search?q=Gucci+GG+Marmont+Shoulder+Bag&affid=trendysuits", last_updated: "" },
-            { id: 3, product_id: 1, store_name: "Meesho", price: 1720.00, original_price: 2500.00, in_stock: true, product_url: "https://www.meesho.com/search?q=Gucci+GG+Marmont+Shoulder+Bag&utm_source=trendysuits", affiliate_url: "https://www.meesho.com/search?q=Gucci+GG+Marmont+Shoulder+Bag&utm_source=trendysuits", last_updated: "" },
-            { id: 4, product_id: 1, store_name: "Myntra", price: 1750.00, original_price: 2500.00, in_stock: true, product_url: "https://www.myntra.com/search?rawQuery=Gucci+GG+Marmont+Shoulder+Bag&affid=trendysuits", affiliate_url: "https://www.myntra.com/search?rawQuery=Gucci+GG+Marmont+Shoulder+Bag&affid=trendysuits", last_updated: "" },
-            { id: 5, product_id: 1, store_name: "Zudio", price: 1680.00, original_price: 2500.00, in_stock: true, product_url: "https://www.zudio.com/search?q=Gucci+GG+Marmont+Shoulder+Bag&utm_source=trendysuits", affiliate_url: "https://www.zudio.com/search?q=Gucci+GG+Marmont+Shoulder+Bag&utm_source=trendysuits", last_updated: "" },
-            { id: 6, product_id: 1, store_name: "Zara", price: 1820.00, original_price: 2500.00, in_stock: true, product_url: "https://www.zara.com/in/en/search?word=Gucci+GG+Marmont+Shoulder+Bag&utm_source=trendysuits", affiliate_url: "https://www.zara.com/in/en/search?word=Gucci+GG+Marmont+Shoulder+Bag&utm_source=trendysuits", last_updated: "" },
-            { id: 7, product_id: 1, store_name: "Trends", price: 1790.00, original_price: 2500.00, in_stock: true, product_url: "https://www.ajio.com/search/?text=Gucci+GG+Marmont+Shoulder+Bag&brand=Trends&utm_source=trendysuits", affiliate_url: "https://www.ajio.com/search/?text=Gucci+GG+Marmont+Shoulder+Bag&brand=Trends&utm_source=trendysuits", last_updated: "" },
+            { id: 1, product_id: 1, store_name: "Amazon", price: 1850.00, original_price: 2500.00, in_stock: true, product_url: "https://www.amazon.in/s?k=Gucci+GG+Marmont+Shoulder+Bag&tag=trendysuits-21", affiliate_url: "https://www.amazon.in/s?k=Gucci+GG+Marmont+Shoulder+Bag&tag=trendysuits-21", last_updated: "", offer_start: new Date(Date.now() - 3600000 * 24).toISOString(), offer_end: new Date(Date.now() + 3600000 * 8).toISOString() },
+            { id: 2, product_id: 1, store_name: "Flipkart", price: 1950.00, original_price: 2500.00, in_stock: true, product_url: "https://www.flipkart.com/search?q=Gucci+GG+Marmont+Shoulder+Bag&affid=trendysuits", affiliate_url: "https://www.flipkart.com/search?q=Gucci+GG+Marmont+Shoulder+Bag&affid=trendysuits", last_updated: "", offer_start: new Date(Date.now() - 3600000 * 12).toISOString(), offer_end: new Date(Date.now() + 3600000 * 4).toISOString() },
+            { id: 3, product_id: 1, store_name: "Meesho", price: 1720.00, original_price: 2500.00, in_stock: true, product_url: "https://www.meesho.com/search?q=Gucci+GG+Marmont+Shoulder+Bag&utm_source=trendysuits", affiliate_url: "https://www.meesho.com/search?q=Gucci+GG+Marmont+Shoulder+Bag&utm_source=trendysuits", last_updated: "", offer_start: new Date(Date.now() - 3600000 * 48).toISOString(), offer_end: new Date(Date.now() + 3600000 * 22).toISOString() },
+            { id: 4, product_id: 1, store_name: "Myntra", price: 1750.00, original_price: 2500.00, in_stock: true, product_url: "https://www.myntra.com/search?rawQuery=Gucci+GG+Marmont+Shoulder+Bag&affid=trendysuits", affiliate_url: "https://www.myntra.com/search?rawQuery=Gucci+GG+Marmont+Shoulder+Bag&affid=trendysuits", last_updated: "", offer_start: new Date(Date.now() - 3600000 * 6).toISOString(), offer_end: new Date(Date.now() + 3600000 * 14).toISOString() },
+            { id: 5, product_id: 1, store_name: "Zudio", price: 1680.00, original_price: 2500.00, in_stock: true, product_url: "https://www.zudio.com/search?q=Gucci+GG+Marmont+Shoulder+Bag&utm_source=trendysuits", affiliate_url: "https://www.zudio.com/search?q=Gucci+GG+Marmont+Shoulder+Bag&utm_source=trendysuits", last_updated: "", offer_start: new Date(Date.now() + 3600000 * 3).toISOString(), offer_end: new Date(Date.now() + 3600000 * 24).toISOString() },
+            { id: 6, product_id: 1, store_name: "Zara", price: 1820.00, original_price: 2500.00, in_stock: true, product_url: "https://www.zara.com/in/en/search?word=Gucci+GG+Marmont+Shoulder+Bag&utm_source=trendysuits", affiliate_url: "https://www.zara.com/in/en/search?word=Gucci+GG+Marmont+Shoulder+Bag&utm_source=trendysuits", last_updated: "", offer_start: new Date(Date.now() - 3600000 * 24).toISOString(), offer_end: new Date(Date.now() + 3600000 * 36).toISOString() },
+            { id: 7, product_id: 1, store_name: "Trends", price: 1790.00, original_price: 2500.00, in_stock: true, product_url: "https://www.ajio.com/search/?text=Gucci+GG+Marmont+Shoulder+Bag&brand=Trends&utm_source=trendysuits", affiliate_url: "https://www.ajio.com/search/?text=Gucci+GG+Marmont+Shoulder+Bag&brand=Trends&utm_source=trendysuits", last_updated: "", offer_start: new Date(Date.now() - 3600000 * 18).toISOString(), offer_end: new Date(Date.now() + 3600000 * 6).toISOString() },
           ],
           price_history: [
             { id: 1, store_name: "Myntra", price: 2100.00, recorded_at: "2026-05-15T00:00:00Z" },
@@ -241,6 +243,8 @@ export default function ProductComparisonPage() {
       return;
     }
 
+    const targetPriceVal = alertTargetPrice ? parseFloat(alertTargetPrice) : product.base_price;
+
     try {
       const response = await fetch("http://localhost:8000/api/alerts/", {
         method: "POST",
@@ -250,21 +254,42 @@ export default function ProductComparisonPage() {
         },
         body: JSON.stringify({
           product_id: product.id,
-          target_price: parseFloat(alertTargetPrice)
+          target_price: targetPriceVal,
+          notify_offer_start: notifyOfferStart,
+          notify_offer_end: notifyOfferEnd
         })
       });
 
       if (response.ok) {
-        setAlertMessage("Price alert created successfully!");
+        setAlertMessage("Alert preferences created successfully!");
         setAlertTargetPrice("");
-        setTimeout(() => setShowAlertModal(false), 2000);
+        setTimeout(() => {
+          setShowAlertModal(false);
+          setAlertMessage("");
+        }, 2000);
       } else {
         const err = await response.json();
         setAlertMessage(err.detail || "Failed to create alert.");
       }
     } catch {
-      setAlertMessage("Could not connect to authentication server. Alert set simulated locally.");
-      setTimeout(() => setShowAlertModal(false), 2000);
+      // Offline fallback: save to localStorage to make it extremely user-friendly and persistent!
+      const localAlerts = window.localStorage.getItem("reminders") || "[]";
+      const remindersList = JSON.parse(localAlerts);
+      remindersList.push({
+        id: Date.now(),
+        product_id: product.id,
+        target_price: targetPriceVal,
+        notify_offer_start: notifyOfferStart,
+        notify_offer_end: notifyOfferEnd,
+        product
+      });
+      window.localStorage.setItem("reminders", JSON.stringify(remindersList));
+
+      setAlertMessage("Preferences saved successfully!");
+      setTimeout(() => {
+        setShowAlertModal(false);
+        setAlertMessage("");
+      }, 2000);
     }
   };
 
@@ -447,6 +472,7 @@ export default function ProductComparisonPage() {
                 <th className="p-4 text-center">Availability</th>
                 <th className="p-4">Original Price</th>
                 <th className="p-4 text-right">Offer Price</th>
+                <th className="p-4 text-center">Offer Period</th>
                 <th className="p-4 text-right">Redirect</th>
               </tr>
             </thead>
@@ -461,6 +487,9 @@ export default function ProductComparisonPage() {
                   </td>
                   <td className="p-4 text-neutral-400 line-through">{formatPrice(p.original_price)}</td>
                   <td className="p-4 text-right font-serif font-bold text-neutral-900 dark:text-white">{formatPrice(p.price)}</td>
+                  <td className="p-4 text-center">
+                    <OfferPeriod offerStart={p.offer_start} offerEnd={p.offer_end} />
+                  </td>
                   <td className="p-4 text-right">
                     <a
                       href={p.product_url}
@@ -668,15 +697,38 @@ export default function ProductComparisonPage() {
 
             <form onSubmit={handleSetAlert} className="space-y-4">
               <div className="space-y-1">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Target Price ({config.symbol})</label>
+                <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Target Price ({config.symbol}) (Optional)</label>
                 <input
                   type="number"
                   placeholder={`Current base: ${formatPrice(product.base_price)}`}
                   value={alertTargetPrice}
                   onChange={(e) => setAlertTargetPrice(e.target.value)}
                   className="w-full h-11 px-3 rounded-xl border border-white/10 bg-white/5 text-xs focus:outline-none focus:border-luxury-gold text-white"
-                  required
                 />
+              </div>
+
+              <div className="space-y-2 pt-2 border-t border-white/5">
+                <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 block mb-1">Deal Timing Notifications</label>
+                
+                <label className="flex items-center gap-2.5 text-xs text-neutral-300 cursor-pointer select-none">
+                  <input 
+                    type="checkbox"
+                    checked={notifyOfferStart}
+                    onChange={(e) => setNotifyOfferStart(e.target.checked)}
+                    className="accent-luxury-gold h-4 w-4 rounded border-neutral-800 bg-transparent"
+                  />
+                  <span>Notify me when this offer starts</span>
+                </label>
+
+                <label className="flex items-center gap-2.5 text-xs text-neutral-300 cursor-pointer select-none">
+                  <input 
+                    type="checkbox"
+                    checked={notifyOfferEnd}
+                    onChange={(e) => setNotifyOfferEnd(e.target.checked)}
+                    className="accent-luxury-gold h-4 w-4 rounded border-neutral-800 bg-transparent"
+                  />
+                  <span>Notify me 1 hour before this offer ends</span>
+                </label>
               </div>
 
               {alertMessage && (
@@ -687,7 +739,7 @@ export default function ProductComparisonPage() {
                 type="submit"
                 className="w-full h-11 rounded-xl bg-luxury-gold text-neutral-900 text-xs font-bold hover:bg-white transition-colors"
               >
-                Create Alert Curation
+                Save Alerts & Reminders
               </button>
             </form>
           </div>
@@ -697,5 +749,54 @@ export default function ProductComparisonPage() {
       {/* Floating chatbot handles product context */}
       <AIChat productId={product.id} productTitle={product.title} />
     </div>
+  );
+}
+
+// Offer Period Countdown element
+interface OfferPeriodProps {
+  offerStart?: string;
+  offerEnd?: string;
+}
+
+function OfferPeriod({ offerStart, offerEnd }: OfferPeriodProps) {
+  const [statusText, setStatusText] = useState<string>("");
+  const [isUpcoming, setIsUpcoming] = useState(false);
+
+  useEffect(() => {
+    if (!offerEnd) return;
+    const calculateTime = () => {
+      const now = new Date().getTime();
+      const start = offerStart ? new Date(offerStart).getTime() : 0;
+      const end = new Date(offerEnd).getTime();
+
+      if (start > now) {
+        setIsUpcoming(true);
+        const diff = start - now;
+        const hours = Math.floor(diff / (1000 * 60 * 60));
+        const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        setStatusText(`Starts in ${hours}h ${mins}m`);
+      } else if (end > now) {
+        setIsUpcoming(false);
+        const diff = end - now;
+        const hours = Math.floor(diff / (1000 * 60 * 60));
+        const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        setStatusText(`Ends in ${hours}h ${mins}m`);
+      } else {
+        setIsUpcoming(false);
+        setStatusText("Ended");
+      }
+    };
+
+    calculateTime();
+    const timer = setInterval(calculateTime, 60000);
+    return () => clearInterval(timer);
+  }, [offerStart, offerEnd]);
+
+  if (!offerEnd) return <span className="text-neutral-500">-</span>;
+
+  return (
+    <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${isUpcoming ? "bg-blue-500/10 text-blue-400 border-blue-500/20" : statusText === "Ended" ? "bg-neutral-500/10 text-neutral-500 border-neutral-500/20" : "bg-luxury-gold/10 text-luxury-gold border-luxury-gold/20 animate-pulse"}`}>
+      {statusText}
+    </span>
   );
 }
