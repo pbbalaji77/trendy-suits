@@ -80,15 +80,23 @@ function SearchContent() {
     if (minRating > 0) url += `&min_rating=${minRating}`;
     if (minDiscount > 0) url += `&min_discount=${minDiscount}`;
 
-    fetch(url)
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 1200);
+
+    fetch(url, { signal: controller.signal })
       .then(res => {
+        clearTimeout(timeoutId);
         if (res.ok) return res.json();
         throw new Error();
       })
       .then(data => {
+        if (!data || data.length === 0) {
+          throw new Error();
+        }
         setResults(data);
       })
       .catch(() => {
+        clearTimeout(timeoutId);
         // Fallback mock search results if offline
         const mockFallback: Product[] = [
           {

@@ -108,9 +108,22 @@ export default function ProductComparisonPage() {
   useEffect(() => {
     async function fetchProductData() {
       setLoading(true);
+      const fetchWithTimeout = async (url: string, timeout = 1200) => {
+        const controller = new AbortController();
+        const id = setTimeout(() => controller.abort(), timeout);
+        try {
+          const res = await fetch(url, { signal: controller.signal });
+          clearTimeout(id);
+          return res;
+        } catch (err) {
+          clearTimeout(id);
+          throw err;
+        }
+      };
+
       try {
-        const prodRes = await fetch(`http://localhost:8000/api/products/${id}`);
-        const predRes = await fetch(`http://localhost:8000/api/products/${id}/prediction`);
+        const prodRes = await fetchWithTimeout(`http://localhost:8000/api/products/${id}`);
+        const predRes = await fetchWithTimeout(`http://localhost:8000/api/products/${id}/prediction`);
         
         if (prodRes.ok) {
           const prodData = await prodRes.json();

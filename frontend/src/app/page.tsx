@@ -20,15 +20,40 @@ export default function Home() {
 
   useEffect(() => {
     async function fetchData() {
+      const fetchWithTimeout = async (url: string, timeout = 1200) => {
+        const controller = new AbortController();
+        const id = setTimeout(() => controller.abort(), timeout);
+        try {
+          const res = await fetch(url, { signal: controller.signal });
+          clearTimeout(id);
+          return res;
+        } catch (err) {
+          clearTimeout(id);
+          throw err;
+        }
+      };
+
       try {
         // Fetch trending
-        const trendingRes = await fetch("http://localhost:8000/api/deals/trending?limit=4");
-        const recsRes = await fetch("http://localhost:8000/api/deals/recommendations");
-        const discountRes = await fetch("http://localhost:8000/api/products/?sort_by=deal_score&limit=12");
+        const trendingRes = await fetchWithTimeout("http://localhost:8000/api/deals/trending?limit=4");
+        const recsRes = await fetchWithTimeout("http://localhost:8000/api/deals/recommendations");
+        const discountRes = await fetchWithTimeout("http://localhost:8000/api/products/?sort_by=deal_score&limit=12");
 
-        if (trendingRes.ok) setTrending(await trendingRes.json());
-        if (recsRes.ok) setRecommendations(await recsRes.json());
-        if (discountRes.ok) setDiscounts(await discountRes.json());
+        let trendingData = [];
+        let recsData = [];
+        let discountData = [];
+
+        if (trendingRes.ok) trendingData = await trendingRes.json();
+        if (recsRes.ok) recsData = await recsRes.json();
+        if (discountRes.ok) discountData = await discountRes.json();
+
+        if (trendingData.length === 0 || discountData.length === 0) {
+          throw new Error("No products in database");
+        }
+
+        setTrending(trendingData);
+        setRecommendations(recsData);
+        setDiscounts(discountData);
       } catch (err) {
         console.warn("Could not fetch home data, loading offline fallback mock data...", err);
         // Load fallback mock data directly to guarantee visual excellence out of the box
