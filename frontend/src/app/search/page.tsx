@@ -173,7 +173,7 @@ function SearchContent() {
     recognition.start();
   };
 
-  // Simulated Image Search
+  // Simulated Image Search with filename keyword parsing
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -181,12 +181,36 @@ function SearchContent() {
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result as string);
-        // Simulate loading and match detection
         setLoading(true);
         setTimeout(() => {
-          // Trigger mock image matches (e.g. Prada handbag matches)
-          setQuery("Nylon Bag");
-          setSelectedCategory("bags-handbags");
+          const filename = file.name.toLowerCase();
+          
+          if (filename.includes("suit") || filename.includes("blazer") || filename.includes("tuxedo") || filename.includes("formal")) {
+            setQuery("Suit");
+            setSelectedCategory("suits-blazers");
+          } else if (filename.includes("dress") || filename.includes("gown") || filename.includes("frock") || filename.includes("sari") || filename.includes("saree") || filename.includes("lehenga")) {
+            setQuery("Dress");
+            setSelectedCategory("dresses");
+          } else if (filename.includes("coat") || filename.includes("jacket") || filename.includes("wool")) {
+            setQuery("Coat");
+            setSelectedCategory("jackets-coats");
+          } else if (filename.includes("sneaker") || filename.includes("shoe") || filename.includes("footwear") || filename.includes("nike")) {
+            setQuery("Sneakers");
+            setSelectedCategory("sneakers");
+          } else if (filename.includes("bag") || filename.includes("handbag") || filename.includes("purse") || filename.includes("prada")) {
+            setQuery("Bag");
+            setSelectedCategory("bags-handbags");
+          } else if (filename.includes("watch") || filename.includes("rolex")) {
+            setQuery("Watch");
+            setSelectedCategory("watches");
+          } else if (filename.includes("glass") || filename.includes("sunglass")) {
+            setQuery("Sunglasses");
+            setSelectedCategory("sunglasses");
+          } else {
+            // Default fallback to Dresses
+            setQuery("Dress");
+            setSelectedCategory("dresses");
+          }
           setLoading(false);
         }, 1500);
       };
