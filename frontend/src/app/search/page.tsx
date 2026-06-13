@@ -81,7 +81,7 @@ function SearchContent() {
     if (minDiscount > 0) url += `&min_discount=${minDiscount}`;
 
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 1200);
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
 
     fetch(url, { signal: controller.signal })
       .then(res => {

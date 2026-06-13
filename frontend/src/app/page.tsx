@@ -20,7 +20,7 @@ export default function Home() {
 
   useEffect(() => {
     async function fetchData() {
-      const fetchWithTimeout = async (url: string, timeout = 1200) => {
+      const fetchWithTimeout = async (url: string, timeout = 10000) => {
         const controller = new AbortController();
         const id = setTimeout(() => controller.abort(), timeout);
         try {
