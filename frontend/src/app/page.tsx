@@ -24,7 +24,7 @@ export default function Home() {
         // Fetch trending
         const trendingRes = await fetch("http://localhost:8000/api/deals/trending?limit=4");
         const recsRes = await fetch("http://localhost:8000/api/deals/recommendations");
-        const discountRes = await fetch("http://localhost:8000/api/products/?sort_by=deal_score&limit=4");
+        const discountRes = await fetch("http://localhost:8000/api/products/?sort_by=deal_score&limit=12");
 
         if (trendingRes.ok) setTrending(await trendingRes.json());
         if (recsRes.ok) setRecommendations(await recsRes.json());

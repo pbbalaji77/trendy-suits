@@ -24,6 +24,72 @@ export default function ProductComparisonPage() {
   const [prediction, setPrediction] = useState<Prediction | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
+
+  useEffect(() => {
+    if (product) {
+      const localWish = window.localStorage.getItem("wishlist");
+      if (localWish) {
+        try {
+          const wishList = JSON.parse(localWish) as any[];
+          setIsSaved(wishList.some(p => p.id === product.id));
+        } catch {
+          setIsSaved(false);
+        }
+      }
+    }
+  }, [product]);
+
+  const handleRedirect = (e: React.MouseEvent, url: string) => {
+    const token = window.localStorage.getItem("token");
+    if (!token) {
+      e.preventDefault();
+      alert("Please sign in or sign up to visit the store and buy products!");
+      router.push("/dashboard");
+    }
+  };
+
+  const handleAddToWardrobe = () => {
+    const token = window.localStorage.getItem("token");
+    if (!token) {
+      alert("Please sign in or sign up to add items to your wardrobe!");
+      router.push("/dashboard");
+      return;
+    }
+
+    if (!product) return;
+
+    const localWish = window.localStorage.getItem("wishlist");
+    let wishList: any[] = [];
+    if (localWish) {
+      try {
+        wishList = JSON.parse(localWish);
+      } catch {
+        wishList = [];
+      }
+    }
+
+    if (isSaved) {
+      const updated = wishList.filter(p => p.id !== product.id);
+      window.localStorage.setItem("wishlist", JSON.stringify(updated));
+      setIsSaved(false);
+    } else {
+      wishList.push({
+        id: product.id,
+        title: product.title,
+        base_price: product.base_price,
+        rating: product.rating,
+        reviews_count: product.reviews_count,
+        deal_score: product.deal_score,
+        image_url: product.image_url,
+        gender: product.gender,
+        brand: product.brand,
+        category: product.category
+      });
+      window.localStorage.setItem("wishlist", JSON.stringify(wishList));
+      setIsSaved(true);
+    }
+  };
 
   // Price history timeframe (7d, 30d, 90d, 1y)
   const [timeframe, setTimeframe] = useState<"7d" | "30d" | "90d" | "1y">("30d");
@@ -323,6 +389,7 @@ export default function ProductComparisonPage() {
             <div className="flex flex-col sm:flex-row gap-3">
               <a
                 href={bestStore.product_url}
+                onClick={(e) => handleRedirect(e, bestStore.product_url)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex-1 h-12 rounded-xl bg-luxury-gold text-neutral-900 font-bold hover:bg-white transition-colors duration-300 flex items-center justify-center gap-1.5 text-sm"
@@ -330,10 +397,25 @@ export default function ProductComparisonPage() {
                 <ShoppingBag size={16} /> Buy Now on {bestStore.store_name}
               </a>
               <button
-                onClick={() => setShowAlertModal(true)}
-                className="px-6 h-12 rounded-xl border border-neutral-200 dark:border-neutral-800 hover:border-luxury-gold hover:text-luxury-gold bg-transparent text-sm font-bold text-neutral-800 dark:text-neutral-200 transition-colors duration-300 flex items-center justify-center gap-1.5"
+                onClick={handleAddToWardrobe}
+                className="px-4 h-12 rounded-xl border border-neutral-200 dark:border-neutral-800 hover:border-luxury-gold hover:text-luxury-gold bg-transparent text-sm font-bold text-neutral-800 dark:text-neutral-200 transition-colors duration-300 flex items-center justify-center gap-1.5"
               >
-                <Bell size={16} /> Price Alert
+                <Heart size={16} className={isSaved ? "fill-red-500 text-red-500" : ""} /> 
+                {isSaved ? "Saved" : "Save"}
+              </button>
+              <button
+                onClick={() => {
+                  const token = window.localStorage.getItem("token");
+                  if (!token) {
+                    alert("Please sign in or sign up to set price alerts!");
+                    router.push("/dashboard");
+                    return;
+                  }
+                  setShowAlertModal(true);
+                }}
+                className="px-4 h-12 rounded-xl border border-neutral-200 dark:border-neutral-800 hover:border-luxury-gold hover:text-luxury-gold bg-transparent text-sm font-bold text-neutral-800 dark:text-neutral-200 transition-colors duration-300 flex items-center justify-center gap-1.5"
+              >
+                <Bell size={16} /> Alert
               </button>
             </div>
           </div>
@@ -370,6 +452,7 @@ export default function ProductComparisonPage() {
                   <td className="p-4 text-right">
                     <a
                       href={p.product_url}
+                      onClick={(e) => handleRedirect(e, p.product_url)}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="px-3.5 py-1.5 rounded-lg border border-neutral-200 dark:border-neutral-800 hover:border-luxury-gold hover:text-luxury-gold transition-colors duration-300 inline-flex items-center gap-1 text-xs font-semibold"
