@@ -8,9 +8,29 @@ from app.services.ai_service import AIService
 
 # Store names as requested
 STORES = [
-    "Amazon", "Flipkart", "Myntra", "Ajio",
-    "Tata Cliq", "Nykaa Fashion", "Reliance Trends", "Shoppers Stop"
+    "Amazon", "Flipkart", "Meesho", "Myntra", "Zudio", "Zara", "Trends"
 ]
+
+def get_affiliate_url(store_name: str, query: str) -> str:
+    import urllib.parse
+    q_encoded = urllib.parse.quote_plus(query)
+    store_lower = store_name.lower().strip()
+    if "amazon" in store_lower:
+        return f"https://www.amazon.in/s?k={q_encoded}&tag=trendysuits-21"
+    elif "flipkart" in store_lower:
+        return f"https://www.flipkart.com/search?q={q_encoded}&affid=trendysuits"
+    elif "meesho" in store_lower:
+        return f"https://www.meesho.com/search?q={q_encoded}&utm_source=trendysuits"
+    elif "myntra" in store_lower:
+        return f"https://www.myntra.com/search?rawQuery={q_encoded}&affid=trendysuits"
+    elif "zudio" in store_lower:
+        return f"https://www.zudio.com/search?q={q_encoded}&utm_source=trendysuits"
+    elif "zara" in store_lower:
+        return f"https://www.zara.com/in/en/search?word={q_encoded}&utm_source=trendysuits"
+    elif "trends" in store_lower:
+        return f"https://www.ajio.com/search/?text={q_encoded}&brand=Trends&utm_source=trendysuits"
+    else:
+        return f"https://www.{store_lower.replace(' ', '')}.com/search?q={q_encoded}&utm_source=trendysuits"
 
 def seed_db():
     db = SessionLocal()
@@ -316,14 +336,15 @@ def seed_db():
             original_price = base_original
             in_stock = random.choice([True, True, True, False]) # 75% in-stock rate
             
+            aff_url = get_affiliate_url(store, product.title)
             p_price = ProductPrice(
                 product_id=product.id,
                 store_name=store,
                 price=store_price,
                 original_price=original_price,
                 in_stock=in_stock,
-                product_url=f"https://www.{store.lower().replace(' ', '')}.com/search?q={product.title.replace(' ', '+')}",
-                affiliate_url=f"https://click.affiliate.trendysuits.ai/redirect?store={store}&prod_id={product.id}"
+                product_url=aff_url,
+                affiliate_url=aff_url
             )
             db.add(p_price)
             prices.append(p_price)
@@ -363,8 +384,8 @@ def seed_db():
         review_comments = [
             ("Amazing Quality!", "Absolutely worth the price. The material is premium and shipping was ultra fast."),
             ("Great styling details", "Slightly expensive but the craftsmanship is outstanding. Highly recommend it."),
-            ("Good deal", "Got this on Ajio for a discount. Looks great and fits perfectly."),
-            ("Decent product", "Quality is alright, but the price difference between Myntra and Shoppers Stop was massive. Glad I checked Trendy Suits!"),
+            ("Good deal", "Got this on Meesho for a discount. Looks great and fits perfectly."),
+            ("Decent product", "Quality is alright, but the price difference between Myntra and Trends was massive. Glad I checked Trendy Suits!"),
             ("Beautiful look", "Very premium luxury feel. Exceeded expectations!"),
         ]
         

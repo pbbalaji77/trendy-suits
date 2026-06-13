@@ -1,6 +1,6 @@
 # Trendy Suits AI - Fashion Price Comparison Platform
 
-Trendy Suits AI is a premium, luxury-themed fashion price comparison platform. It aggregates fashion catalogs and queries real-time pricing feeds from 8 e-commerce stores (Amazon, Flipkart, Myntra, Ajio, Tata Cliq, Nykaa Fashion, Reliance Trends, Shoppers Stop) to display the best available deals, price drop history charts, price forecasts, and recommendations.
+Trendy Suits AI is a premium, luxury-themed fashion price comparison platform. It aggregates fashion catalogs and queries real-time pricing feeds from popular affiliate e-commerce stores (Amazon, Flipkart, Meesho, Myntra, Zudio, Zara, and Trends) to display the best available deals, price drop history charts, price forecasts, and recommendations.
 
 ---
 

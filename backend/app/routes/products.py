@@ -12,6 +12,27 @@ from app.auth.jwt import get_current_user
 from app.services.ai_service import AIService
 from app.services.cache_service import cache
 
+def get_affiliate_url(store_name: str, query: str) -> str:
+    import urllib.parse
+    q_encoded = urllib.parse.quote_plus(query)
+    store_lower = store_name.lower().strip()
+    if "amazon" in store_lower:
+        return f"https://www.amazon.in/s?k={q_encoded}&tag=trendysuits-21"
+    elif "flipkart" in store_lower:
+        return f"https://www.flipkart.com/search?q={q_encoded}&affid=trendysuits"
+    elif "meesho" in store_lower:
+        return f"https://www.meesho.com/search?q={q_encoded}&utm_source=trendysuits"
+    elif "myntra" in store_lower:
+        return f"https://www.myntra.com/search?rawQuery={q_encoded}&affid=trendysuits"
+    elif "zudio" in store_lower:
+        return f"https://www.zudio.com/search?q={q_encoded}&utm_source=trendysuits"
+    elif "zara" in store_lower:
+        return f"https://www.zara.com/in/en/search?word={q_encoded}&utm_source=trendysuits"
+    elif "trends" in store_lower:
+        return f"https://www.ajio.com/search/?text={q_encoded}&brand=Trends&utm_source=trendysuits"
+    else:
+        return f"https://www.{store_lower.replace(' ', '')}.com/search?q={q_encoded}&utm_source=trendysuits"
+
 router = APIRouter(prefix="/products", tags=["products"])
 
 @router.get("/", response_model=List[ProductResponse])
@@ -304,20 +325,21 @@ def generate_dynamic_products(q: str, db: Session) -> List[Product]:
 
         # Create store prices
         prices = []
-        stores = ["Flipkart", "Amazon", "Myntra", "Ajio", "Tata Cliq", "Reliance Trends", "Shoppers Stop"]
+        stores = ["Amazon", "Flipkart", "Meesho", "Myntra", "Zudio", "Zara", "Trends"]
         
         for store in stores:
             discount_pct = random.uniform(0.05, 0.35)
             store_price = round(base_original_price * (1 - discount_pct), 2)
             
+            aff_url = get_affiliate_url(store, p.title)
             p_price = ProductPrice(
                 product_id=p.id,
                 store_name=store,
                 price=store_price,
                 original_price=base_original_price,
                 in_stock=True,
-                product_url=f"https://www.{store.lower().replace(' ', '')}.com/search?q={p.title.replace(' ', '+')}",
-                affiliate_url=f"https://click.affiliate.trendysuits.ai/redirect?store={store}&prod_id={p.id}"
+                product_url=aff_url,
+                affiliate_url=aff_url
             )
             db.add(p_price)
             prices.append(p_price)

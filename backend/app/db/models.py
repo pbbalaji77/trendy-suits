@@ -68,7 +68,7 @@ class ProductPrice(Base):
     
     id = Column(Integer, primary_key=True, index=True)
     product_id = Column(Integer, ForeignKey("products.id"), nullable=False)
-    store_name = Column(String, nullable=False) # Amazon, Flipkart, Myntra, Ajio, Tata Cliq, Nykaa Fashion, Reliance Trends, Shoppers Stop
+    store_name = Column(String, nullable=False) # Amazon, Flipkart, Meesho, Myntra, Zudio, Zara, Trends
     price = Column(Float, nullable=False)
     original_price = Column(Float, nullable=False)
     in_stock = Column(Boolean, default=True)

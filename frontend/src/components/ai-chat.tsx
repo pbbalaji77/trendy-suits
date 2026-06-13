@@ -98,8 +98,8 @@ export default function AIChat({ productId, productTitle }: AIChatProps) {
         
         if (text.includes("price") || text.includes("cheapest") || text.includes("lowest")) {
           reply = productTitle 
-            ? `The lowest price for **${productTitle}** is currently on **Myntra** at **$95.00**, saving you 25% off the original price. Other stores like Amazon ($105.00) and Shoppers Stop ($112.00) are higher.`
-            : "Simply enter the item name in the search bar above, and I will show you the lowest price across Amazon, Flipkart, Myntra, and Ajio!";
+            ? `The lowest price for **${productTitle}** is currently on **Trends** at **$95.00**, saving you 25% off the original price. Other stores like Amazon ($105.00) and Zara ($112.00) are higher.`
+            : "Simply enter the item name in the search bar above, and I will show you the lowest price across Amazon, Flipkart, Meesho, Myntra, Zudio, Zara, and Trends!";
         } else if (text.includes("worth") || text.includes("should i buy")) {
           reply = productTitle
             ? `With a rating of **4.6★** and a Deal Score of **85/100**, this is a highly rated item with a strong discount. I recommend buying now before the price rebounds.`
@@ -107,7 +107,7 @@ export default function AIChat({ productId, productTitle }: AIChatProps) {
         } else if (text.includes("alternative") || text.includes("similar")) {
           reply = `Here are some popular alternatives to this item:\n1. **Gucci Marmont Shoulder Bag** ($2,100)\n2. **Prada Nylon Re-Edition Bag** ($1,850)\nThese options feature similar premium aesthetics and excellent reviews.`;
         } else {
-          reply = "I'm analyzing the catalog for you. Trendy Suits AI monitors price drops in real-time across 8 e-commerce stores. Let me know if you need specific price comparison charts, price predictions, or size options!";
+          reply = "I'm analyzing the catalog for you. Trendy Suits AI monitors price drops in real-time across Amazon, Flipkart, Meesho, Myntra, Zudio, Zara, and Trends. Let me know if you need specific price comparison charts, price predictions, or size options!";
         }
 
         setMessages((prev) => [

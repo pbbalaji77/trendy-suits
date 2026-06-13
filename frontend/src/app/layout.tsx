@@ -6,7 +6,7 @@ import AIChat from "@/components/ai-chat";
 
 export const metadata: Metadata = {
   title: "Trendy Suits AI - Luxury Fashion Price Comparison Platform",
-  description: "Find premium clothing, shoes, watches, and accessories at the lowest prices across Amazon, Flipkart, Myntra, Ajio, Tata Cliq, and Nykaa Fashion.",
+  description: "Find premium clothing, shoes, watches, and accessories at the lowest prices across Amazon, Flipkart, Meesho, Myntra, Zudio, Zara, and Trends.",
 };
 
 export default function RootLayout({

@@ -36,12 +36,11 @@ def get_analytics(
     traffic_by_store = [
         {"name": "Amazon", "value": 4000},
         {"name": "Flipkart", "value": 3000},
+        {"name": "Meesho", "value": 3500},
         {"name": "Myntra", "value": 4500},
-        {"name": "Ajio", "value": 2500},
-        {"name": "Tata Cliq", "value": 1500},
-        {"name": "Nykaa Fashion", "value": 2000},
-        {"name": "Reliance Trends", "value": 1000},
-        {"name": "Shoppers Stop", "value": 1200},
+        {"name": "Zudio", "value": 2000},
+        {"name": "Zara", "value": 1500},
+        {"name": "Trends", "value": 2500},
     ]
     
     user_signups_by_day = [
