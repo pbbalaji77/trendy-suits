@@ -13,6 +13,7 @@ import {
 } from "recharts";
 import { Analytics, Product, UserProfile } from "@/types";
 import { useCurrency } from "@/hooks/use-currency";
+import { API_BASE_URL } from "@/config";
 
 export default function AdminDashboard() {
   const router = useRouter();
@@ -61,9 +62,9 @@ export default function AdminDashboard() {
         const authHeader = { "Authorization": `Bearer ${token}` };
         
         // Fetch Admin data
-        const analyticsRes = await fetch("http://localhost:8000/api/admin/analytics", { headers: authHeader });
-        const productsRes = await fetch("http://localhost:8000/api/admin/products", { headers: authHeader });
-        const usersRes = await fetch("http://localhost:8000/api/admin/users", { headers: authHeader });
+        const analyticsRes = await fetch(`${API_BASE_URL}/api/admin/analytics`, { headers: authHeader });
+        const productsRes = await fetch(`${API_BASE_URL}/api/admin/products`, { headers: authHeader });
+        const usersRes = await fetch(`${API_BASE_URL}/api/admin/users`, { headers: authHeader });
 
         if (analyticsRes.ok) setAnalytics(await analyticsRes.json());
         if (productsRes.ok) setProducts(await productsRes.json());
@@ -170,7 +171,7 @@ export default function AdminDashboard() {
     };
 
     try {
-      const response = await fetch("http://localhost:8000/api/admin/products", {
+      const response = await fetch(`${API_BASE_URL}/api/admin/products`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -215,7 +216,7 @@ export default function AdminDashboard() {
     if (!token) return;
 
     try {
-      const res = await fetch(`http://localhost:8000/api/admin/products/${prodId}`, {
+      const res = await fetch(`${API_BASE_URL}/api/admin/products/${prodId}`, {
         method: "DELETE",
         headers: { "Authorization": `Bearer ${token}` }
       });

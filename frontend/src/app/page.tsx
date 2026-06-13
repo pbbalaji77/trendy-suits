@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { Search, Sparkles, TrendingUp, Award, ArrowRight, Percent, ArrowDown } from "lucide-react";
 import { Product } from "@/types";
 import { useCurrency } from "@/hooks/use-currency";
+import { API_BASE_URL } from "@/config";
 
 export default function Home() {
   const router = useRouter();
@@ -35,9 +36,9 @@ export default function Home() {
 
       try {
         // Fetch trending
-        const trendingRes = await fetchWithTimeout("http://localhost:8000/api/deals/trending?limit=4");
-        const recsRes = await fetchWithTimeout("http://localhost:8000/api/deals/recommendations");
-        const discountRes = await fetchWithTimeout("http://localhost:8000/api/products/?sort_by=deal_score&limit=12");
+        const trendingRes = await fetchWithTimeout(`${API_BASE_URL}/api/deals/trending?limit=4`);
+        const recsRes = await fetchWithTimeout(`${API_BASE_URL}/api/deals/recommendations`);
+        const discountRes = await fetchWithTimeout(`${API_BASE_URL}/api/products/?sort_by=deal_score&limit=12`);
 
         let trendingData = [];
         let recsData = [];

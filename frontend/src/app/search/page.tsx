@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { Product } from "@/types";
 import { useCurrency } from "@/hooks/use-currency";
+import { API_BASE_URL } from "@/config";
 
 function SearchContent() {
   const router = useRouter();
@@ -56,7 +57,7 @@ function SearchContent() {
   // Fetch suggestions
   useEffect(() => {
     if (query.trim().length > 1) {
-      fetch(`http://localhost:8000/api/products/suggestions?q=${encodeURIComponent(query)}`)
+      fetch(`${API_BASE_URL}/api/products/suggestions?q=${encodeURIComponent(query)}`)
         .then(res => {
           if (res.ok) return res.json();
           return [];
@@ -71,7 +72,7 @@ function SearchContent() {
   // Main search fetch
   useEffect(() => {
     setLoading(true);
-    let url = `http://localhost:8000/api/products/?q=${encodeURIComponent(query)}`;
+    let url = `${API_BASE_URL}/api/products/?q=${encodeURIComponent(query)}`;
     
     if (selectedBrand) url += `&brand=${encodeURIComponent(selectedBrand)}`;
     if (selectedCategory) url += `&category=${encodeURIComponent(selectedCategory)}`;

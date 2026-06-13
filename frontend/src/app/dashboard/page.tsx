@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { Alert, Product, UserProfile } from "@/types";
 import { useCurrency } from "@/hooks/use-currency";
+import { API_BASE_URL } from "@/config";
 
 export default function UserDashboard() {
   const router = useRouter();
@@ -39,7 +40,7 @@ export default function UserDashboard() {
     if (token) {
       setIsLoggedIn(true);
       try {
-        const response = await fetch("http://localhost:8000/api/auth/me", {
+        const response = await fetch(`${API_BASE_URL}/api/auth/me`, {
           headers: { "Authorization": `Bearer ${token}` }
         });
         if (response.ok) {
@@ -131,7 +132,7 @@ export default function UserDashboard() {
 
   const fetchAlerts = async (token: string) => {
     try {
-      const response = await fetch("http://localhost:8000/api/alerts/", {
+      const response = await fetch(`${API_BASE_URL}/api/alerts/`, {
         headers: { "Authorization": `Bearer ${token}` }
       });
       if (response.ok) {
@@ -170,7 +171,7 @@ export default function UserDashboard() {
 
     try {
       if (authMode === "signup") {
-        const response = await fetch("http://localhost:8000/api/auth/signup", {
+        const response = await fetch(`${API_BASE_URL}/api/auth/signup`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email, password, full_name: fullName })
@@ -185,7 +186,7 @@ export default function UserDashboard() {
           setErrorMessage(err.detail || "Signup failed. Please try again.");
         }
       } else {
-        const response = await fetch("http://localhost:8000/api/auth/login", {
+        const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email, password })
@@ -252,7 +253,7 @@ export default function UserDashboard() {
     if (!token) return;
 
     try {
-      await fetch(`http://localhost:8000/api/alerts/${alertId}`, {
+      await fetch(`${API_BASE_URL}/api/alerts/${alertId}`, {
         method: "DELETE",
         headers: { "Authorization": `Bearer ${token}` }
       });

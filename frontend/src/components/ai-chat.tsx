@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { MessageSquare, X, Send, Sparkles, AlertCircle } from "lucide-react";
+import { API_BASE_URL } from "@/config";
 
 interface Message {
   id: string;
@@ -22,31 +23,29 @@ export default function AIChat({ productId, productTitle }: AIChatProps) {
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Initialize with welcome messages
   useEffect(() => {
-    const defaultWelcome = productTitle
-      ? `Hello! I am your AI Fashion Assistant. Ask me anything about the **${productTitle}**! For example:\n- *Is this product worth buying?*\n- *Which store has the lowest price?*\n- *Show me similar alternatives.*`
-      : "Welcome to Trendy Suits AI! I am your personal shopping assistant. Ask me to find the best deals, compare store prices, or predict price changes for your favorite items!";
+    // Initial welcome message
+    const welcomeText = productTitle 
+      ? `Hello! I am your luxury fashion assistant. Ask me anything about the "${productTitle}" - I can analyze historical prices, review deal scores, or suggest fashion matches.`
+      : "Hello! I am your Trendy Suits AI fashion assistant. How can I help you find and compare deals today?";
       
     setMessages([
       {
         id: "welcome",
         sender: "ai",
-        text: defaultWelcome,
+        text: welcomeText,
         timestamp: new Date()
       }
     ]);
-  }, [productTitle, productId]);
-
-  useEffect(() => {
-    if (isOpen) {
-      scrollToBottom();
-    }
-  }, [messages, isOpen]);
+  }, [productTitle]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -67,8 +66,8 @@ export default function AIChat({ productId, productTitle }: AIChatProps) {
       // API call to the backend
       const response = await fetch(
         productId 
-          ? `http://localhost:8000/api/products/${productId}/chat` 
-          : `http://localhost:8000/api/products/1/chat`, // default product fallback
+          ? `${API_BASE_URL}/api/products/${productId}/chat` 
+          : `${API_BASE_URL}/api/products/1/chat`, // default product fallback
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

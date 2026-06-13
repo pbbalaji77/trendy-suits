@@ -13,6 +13,7 @@ import {
 import { ProductDetail, Prediction, ProductPrice } from "@/types";
 import AIChat from "@/components/ai-chat";
 import { useCurrency } from "@/hooks/use-currency";
+import { API_BASE_URL } from "@/config";
 
 export default function ProductComparisonPage() {
   const params = useParams();
@@ -119,8 +120,8 @@ export default function ProductComparisonPage() {
       };
 
       try {
-        const prodRes = await fetchWithTimeout(`http://localhost:8000/api/products/${id}`);
-        const predRes = await fetchWithTimeout(`http://localhost:8000/api/products/${id}/prediction`);
+        const prodRes = await fetchWithTimeout(`${API_BASE_URL}/api/products/${id}`);
+        const predRes = await fetchWithTimeout(`${API_BASE_URL}/api/products/${id}/prediction`);
         
         if (prodRes.ok) {
           const prodData = await prodRes.json();
@@ -241,7 +242,7 @@ export default function ProductComparisonPage() {
     const targetPriceVal = alertTargetPrice ? parseFloat(alertTargetPrice) : product.base_price;
 
     try {
-      const response = await fetch("http://localhost:8000/api/alerts/", {
+      const response = await fetch(`${API_BASE_URL}/api/alerts/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -298,7 +299,7 @@ export default function ProductComparisonPage() {
     }
 
     try {
-      const response = await fetch(`http://localhost:8000/api/products/${product.id}/reviews`, {
+      const response = await fetch(`${API_BASE_URL}/api/products/${product.id}/reviews`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -316,7 +317,7 @@ export default function ProductComparisonPage() {
         setNewReviewTitle("");
         setNewReviewComment("");
         // Reload detail
-        const freshRes = await fetch(`http://localhost:8000/api/products/${id}`);
+        const freshRes = await fetch(`${API_BASE_URL}/api/products/${id}`);
         if (freshRes.ok) setProduct(await freshRes.ok ? await freshRes.json() : product);
       } else {
         const err = await response.json();

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Sparkles, Percent, Tag, Flame, ShieldAlert, ArrowDown } from "lucide-react";
 import { Product } from "@/types";
 import { useCurrency } from "@/hooks/use-currency";
+import { API_BASE_URL } from "@/config";
 
 export default function DealsPage() {
   const { formatPrice } = useCurrency();
@@ -16,9 +17,9 @@ export default function DealsPage() {
     async function fetchDeals() {
       setLoading(true);
       try {
-        let endpoint = "http://localhost:8000/api/deals/trending?limit=16";
+        let endpoint = `${API_BASE_URL}/api/deals/trending?limit=16`;
         if (activeTab === "discounts") {
-          endpoint = "http://localhost:8000/api/products/?sort_by=deal_score&limit=16";
+          endpoint = `${API_BASE_URL}/api/products/?sort_by=deal_score&limit=16`;
         }
         
         const response = await fetch(endpoint);
