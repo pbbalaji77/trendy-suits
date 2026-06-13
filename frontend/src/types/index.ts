@@ -22,6 +22,8 @@ export interface ProductPrice {
   product_url: string;
   affiliate_url: string;
   last_updated: string;
+  offer_start?: string;
+  offer_end?: string;
 }
 
 export interface PriceHistory {
@@ -75,6 +77,8 @@ export interface Alert {
   is_active: boolean;
   created_at: string;
   product: Product;
+  notify_offer_start?: boolean;
+  notify_offer_end?: boolean;
 }
 
 export interface UserProfile {
