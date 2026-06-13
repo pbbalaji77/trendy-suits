@@ -32,6 +32,29 @@ def get_affiliate_url(store_name: str, query: str) -> str:
     else:
         return f"https://www.{store_lower.replace(' ', '')}.com/search?q={q_encoded}&utm_source=trendysuits"
 
+def get_stores_for_product(brand_name: str) -> list[str]:
+    brand_lower = brand_name.lower().strip()
+    if brand_lower == "zara":
+        return ["Zara"]
+    elif brand_lower == "zudio":
+        return ["Zudio"]
+    elif brand_lower == "trends":
+        return ["Trends"]
+    elif brand_lower == "meesho":
+        return ["Meesho"]
+    elif brand_lower == "myntra":
+        return ["Myntra"]
+    elif brand_lower == "amazon":
+        return ["Amazon"]
+    elif brand_lower == "flipkart":
+        return ["Flipkart"]
+    elif brand_lower in ["nike", "ralph lauren"]:
+        return ["Amazon", "Flipkart", "Myntra"]
+    elif brand_lower in ["gucci", "prada", "balenciaga", "rolex"]:
+        return ["Amazon", "Myntra"]
+    else:
+        return ["Amazon", "Flipkart", "Myntra"]
+
 def seed_db():
     db = SessionLocal()
     
@@ -861,7 +884,8 @@ def seed_db():
         prices = []
         base_original = p_info["base_original_price"]
         
-        for store in STORES:
+        product_stores = get_stores_for_product(product.brand.name)
+        for store in product_stores:
             # Randomize discount per store
             # Some stores might be out of stock, some might have high price, some low price
             discount_pct = random.uniform(0.05, 0.35)
