@@ -35,6 +35,8 @@ function SearchContent() {
   const [isListening, setIsListening] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [showImageModal, setShowImageModal] = useState(false);
+  const [detectedQuery, setDetectedQuery] = useState("");
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -173,7 +175,7 @@ function SearchContent() {
     recognition.start();
   };
 
-  // Simulated Image Search with filename keyword parsing
+  // Simulated Image Search with filename keyword parsing & interactive confirmation
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -181,41 +183,63 @@ function SearchContent() {
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result as string);
-        setLoading(true);
-        setTimeout(() => {
-          const filename = file.name.toLowerCase();
-          
-          if (filename.includes("suit") || filename.includes("blazer") || filename.includes("tuxedo") || filename.includes("formal")) {
-            setQuery("Suit");
-            setSelectedCategory("suits-blazers");
-          } else if (filename.includes("dress") || filename.includes("gown") || filename.includes("frock") || filename.includes("sari") || filename.includes("saree") || filename.includes("lehenga")) {
-            setQuery("Dress");
-            setSelectedCategory("dresses");
-          } else if (filename.includes("coat") || filename.includes("jacket") || filename.includes("wool")) {
-            setQuery("Coat");
-            setSelectedCategory("jackets-coats");
-          } else if (filename.includes("sneaker") || filename.includes("shoe") || filename.includes("footwear") || filename.includes("nike")) {
-            setQuery("Sneakers");
-            setSelectedCategory("sneakers");
-          } else if (filename.includes("bag") || filename.includes("handbag") || filename.includes("purse") || filename.includes("prada")) {
-            setQuery("Bag");
-            setSelectedCategory("bags-handbags");
-          } else if (filename.includes("watch") || filename.includes("rolex")) {
-            setQuery("Watch");
-            setSelectedCategory("watches");
-          } else if (filename.includes("glass") || filename.includes("sunglass")) {
-            setQuery("Sunglasses");
-            setSelectedCategory("sunglasses");
-          } else {
-            // Default fallback to Dresses
-            setQuery("Dress");
-            setSelectedCategory("dresses");
-          }
-          setLoading(false);
-        }, 1500);
+        
+        // Parse filename for initial guess
+        const filename = file.name.toLowerCase();
+        let initialGuess = "Designer Dress"; // default
+        
+        if (filename.includes("suit") || filename.includes("blazer") || filename.includes("tuxedo") || filename.includes("formal")) {
+          initialGuess = "Luxury Suit";
+        } else if (filename.includes("dress") || filename.includes("gown") || filename.includes("frock") || filename.includes("sari") || filename.includes("saree") || filename.includes("lehenga")) {
+          initialGuess = "Party Dress";
+        } else if (filename.includes("coat") || filename.includes("jacket") || filename.includes("wool")) {
+          initialGuess = "Oversized Coat";
+        } else if (filename.includes("sneaker") || filename.includes("shoe") || filename.includes("footwear") || filename.includes("nike")) {
+          initialGuess = "Nike Sneakers";
+        } else if (filename.includes("bag") || filename.includes("handbag") || filename.includes("purse") || filename.includes("prada")) {
+          initialGuess = "Prada Handbag";
+        } else if (filename.includes("watch") || filename.includes("rolex")) {
+          initialGuess = "Rolex Watch";
+        } else if (filename.includes("glass") || filename.includes("sunglass")) {
+          initialGuess = "Designer Sunglasses";
+        } else if (filename.includes("shirt") || filename.includes("tshirt") || filename.includes("top")) {
+          initialGuess = "Cotton T-Shirt";
+        } else if (filename.includes("jean") || filename.includes("denim") || filename.includes("pant") || filename.includes("trouser")) {
+          initialGuess = "Denim Jeans";
+        }
+        
+        setDetectedQuery(initialGuess);
+        setShowImageModal(true);
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  const handleImageSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (detectedQuery.trim()) {
+      setLoading(true);
+      setShowImageModal(false);
+      
+      // Map category dynamically
+      const q_lower = detectedQuery.toLowerCase();
+      let cat = "";
+      if (anyKeyword(q_lower, ["shoe", "sneaker", "boot", "footwear", "nike", "adidas"])) cat = "sneakers";
+      else if (anyKeyword(q_lower, ["bag", "handbag", "purse", "clutch", "wallet"])) cat = "bags-handbags";
+      else if (q_lower.includes("watch")) cat = "watches";
+      else if (anyKeyword(q_lower, ["glass", "sunglass", "shade"])) cat = "sunglasses";
+      else if (anyKeyword(q_lower, ["suit", "blazer", "tuxedo", "formal"])) cat = "suits-blazers";
+      else if (anyKeyword(q_lower, ["dress", "gown", "frock", "skirt", "sari", "saree", "lehenga"])) cat = "dresses";
+      else if (anyKeyword(q_lower, ["coat", "jacket", "trench"])) cat = "jackets-coats";
+      else if (anyKeyword(q_lower, ["hoodie", "sweatshirt", "sweater"])) cat = "hoodies-sweatshirts";
+      
+      setSelectedCategory(cat);
+      setQuery(detectedQuery.trim());
+    }
+  };
+  
+  const anyKeyword = (str: string, keywords: string[]) => {
+    return keywords.some(k => str.includes(k));
   };
 
   const clearImageSearch = () => {
@@ -537,6 +561,83 @@ function SearchContent() {
           )}
         </div>
       </div>
+      
+      {/* Visual Search AI Modal */}
+      {showImageModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md">
+          <div className="w-full max-w-md rounded-2xl glass-card-dark border border-white/10 p-6 space-y-5 animate-scaleUp">
+            <div className="flex justify-between items-center border-b border-white/5 pb-3">
+              <h3 className="font-serif text-base font-bold text-white flex items-center gap-1.5">
+                <Sparkles size={16} className="text-luxury-gold animate-pulse" /> AI Visual Search
+              </h3>
+              <button 
+                onClick={() => {
+                  setShowImageModal(false);
+                  setImageFile(null);
+                  setImagePreview(null);
+                }} 
+                className="text-neutral-400 hover:text-white"
+              >
+                <X size={18} />
+              </button>
+            </div>
+            
+            {/* Image Preview */}
+            <div className="h-44 w-full rounded-xl overflow-hidden border border-white/5 relative bg-neutral-950 flex items-center justify-center">
+              {imagePreview && (
+                <img src={imagePreview} alt="Upload preview" className="object-cover w-full h-full" />
+              )}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent flex items-end p-3">
+                <span className="text-[10px] text-neutral-300 bg-black/40 px-2 py-0.5 rounded backdrop-blur-md">Photo Uploaded Successfully</span>
+              </div>
+            </div>
+
+            {/* Keyword Input Form */}
+            <form onSubmit={handleImageSearchSubmit} className="space-y-4">
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">What is in the photo?</label>
+                <input
+                  type="text"
+                  placeholder="e.g. Blue Denim Jacket, Silk Saree, Black Suit..."
+                  value={detectedQuery}
+                  onChange={(e) => setDetectedQuery(e.target.value)}
+                  className="w-full h-11 px-4 rounded-xl border border-white/10 bg-white/5 focus:outline-none focus:border-luxury-gold text-white text-sm"
+                  required
+                />
+              </div>
+
+              {/* Suggestions Chips */}
+              <div className="space-y-1">
+                <span className="text-[9px] font-semibold text-neutral-500 uppercase tracking-widest">Or Select a Keyword Tag:</span>
+                <div className="flex flex-wrap gap-1.5 pt-1">
+                  {["Suit", "Dress", "Saree", "Jeans", "T-Shirt", "Sneakers", "Watch", "Handbag"].map((tag) => (
+                    <button
+                      key={tag}
+                      type="button"
+                      onClick={() => setDetectedQuery(tag)}
+                      className={`px-2.5 py-1 rounded-full text-[10px] font-medium border transition-colors ${
+                        detectedQuery.toLowerCase().includes(tag.toLowerCase())
+                          ? "bg-luxury-gold/25 border-luxury-gold text-luxury-gold"
+                          : "border-white/5 bg-white/5 text-neutral-400 hover:text-white hover:bg-white/10"
+                      }`}
+                    >
+                      {tag}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Submit button */}
+              <button
+                type="submit"
+                className="w-full h-11 rounded-xl bg-luxury-gold hover:bg-luxury-golddark text-neutral-900 font-bold text-sm transition-all duration-300 shadow-luxury-glow/10 flex items-center justify-center gap-1.5 mt-2"
+              >
+                <Search size={16} /> Find Matches & Compare Prices
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

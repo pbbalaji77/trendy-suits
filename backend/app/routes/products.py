@@ -88,6 +88,11 @@ def get_products(
 
     products = query.offset(skip).limit(limit).all()
     
+    # If a specific search term was requested, but no products were found in the database,
+    # we dynamically generate and seed 3 matching products in real-time!
+    if q and len(products) == 0:
+        products = generate_dynamic_products(q, db)
+        
     # Filter by discount in memory if requested
     if min_discount is not None:
         filtered_products = []
@@ -203,3 +208,139 @@ def post_product_review(
     db.commit()
     db.refresh(review)
     return review
+
+
+def generate_dynamic_products(q: str, db: Session) -> List[Product]:
+    from sqlalchemy.sql.expression import func
+    from app.db.models import Brand, Category, Product, ProductPrice, PriceHistory, Review
+    import random
+    from datetime import datetime, timedelta
+
+    # 1. Clean and normalize query
+    q_clean = q.strip()
+    q_cap = q_clean.title()
+
+    # 2. Determine category slug based on query
+    q_lower = q_clean.lower()
+    cat_slug = "clothing"
+    if any(x in q_lower for x in ["shoe", "sneaker", "boot", "footwear", "heel"]):
+        cat_slug = "sneakers"
+    elif any(x in q_lower for x in ["bag", "handbag", "purse", "clutch", "wallet"]):
+        cat_slug = "bags-handbags"
+    elif "watch" in q_lower:
+        cat_slug = "watches"
+    elif any(x in q_lower for x in ["glass", "sunglass", "shade", "eyewear"]):
+        cat_slug = "sunglasses"
+    elif any(x in q_lower for x in ["suit", "blazer", "tuxedo", "formal"]):
+        cat_slug = "suits-blazers"
+    elif any(x in q_lower for x in ["dress", "gown", "frock", "skirt", "sari", "saree", "lehenga"]):
+        cat_slug = "dresses"
+    elif any(x in q_lower for x in ["coat", "jacket", "outerwear", "trench"]):
+        cat_slug = "jackets-coats"
+    elif any(x in q_lower for x in ["hoodie", "sweatshirt", "sweater", "pullover"]):
+        cat_slug = "hoodies-sweatshirts"
+
+    category = db.query(Category).filter(Category.slug == cat_slug).first()
+    if not category:
+        category = db.query(Category).first()
+
+    # 3. Determine image URL category placeholder from Unsplash
+    image_url_mapping = {
+        "sneakers": "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=600&auto=format&fit=crop&q=80",
+        "bags-handbags": "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=600&auto=format&fit=crop&q=80",
+        "watches": "https://images.unsplash.com/photo-1522312346375-d1a52e2b99b3?w=600&auto=format&fit=crop&q=80",
+        "sunglasses": "https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=600&auto=format&fit=crop&q=80",
+        "suits-blazers": "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=600&auto=format&fit=crop&q=80",
+        "dresses": "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=600&auto=format&fit=crop&q=80",
+        "jackets-coats": "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=600&auto=format&fit=crop&q=80",
+        "hoodies-sweatshirts": "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=600&auto=format&fit=crop&q=80",
+        "clothing": "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600&auto=format&fit=crop&q=80"
+    }
+    image_url_base = image_url_mapping.get(cat_slug, image_url_mapping["clothing"])
+
+    # 4. Generate 3 products covering different price tiers (Budget, Premium, Luxury)
+    tiers = [
+        {"name": "Budget", "price_range": (100, 490), "brand_name": "Zara", "desc_prefix": "Affordable and stylish"},
+        {"name": "Premium", "price_range": (690, 2900), "brand_name": "Ralph Lauren", "desc_prefix": "High-quality, comfort-fit"},
+        {"name": "Luxury Designer", "price_range": (4500, 45000), "brand_name": "Gucci", "desc_prefix": "Exclusive couture"}
+    ]
+
+    new_products = []
+
+    for tier in tiers:
+        # Resolve brand
+        brand = db.query(Brand).filter(Brand.name == tier["brand_name"]).first()
+        if not brand:
+            brand = db.query(Brand).first()
+
+        # Randomize price in range
+        min_p, max_p = tier["price_range"]
+        base_original_price = round(random.uniform(min_p, max_p), 2)
+
+        title = f"{brand.name} {tier['name']} {q_cap}"
+        description = f"{tier['desc_prefix']} {q_lower} crafted with premium styling. Perfect for everyday wear, tailoring, or premium events."
+        
+        # Add random parameter to image URL to prevent caching the same image
+        image_url = image_url_base + f"&sig={random.randint(100, 999)}"
+
+        p = Product(
+            title=title,
+            description=description,
+            gender=random.choice(["men", "women", "unisex"]),
+            rating=round(random.uniform(4.0, 4.9), 1),
+            reviews_count=random.randint(5, 120),
+            base_price=0.0,
+            deal_score=50,
+            brand_id=brand.id,
+            category_id=category.id,
+            image_url=image_url,
+            color=random.choice(["Black", "Navy", "White", "Beige", "Burgundy"]),
+            size=random.choice(["S", "M", "L", "XL", "One Size"])
+        )
+        db.add(p)
+        db.commit()
+        db.refresh(p)
+
+        # Create store prices
+        prices = []
+        stores = ["Flipkart", "Amazon", "Myntra", "Ajio", "Tata Cliq", "Reliance Trends", "Shoppers Stop"]
+        
+        for store in stores:
+            discount_pct = random.uniform(0.05, 0.35)
+            store_price = round(base_original_price * (1 - discount_pct), 2)
+            
+            p_price = ProductPrice(
+                product_id=p.id,
+                store_name=store,
+                price=store_price,
+                original_price=base_original_price,
+                in_stock=True,
+                product_url=f"https://www.{store.lower().replace(' ', '')}.com/search?q={p.title.replace(' ', '+')}",
+                affiliate_url=f"https://click.affiliate.trendysuits.ai/redirect?store={store}&prod_id={p.id}"
+            )
+            db.add(p_price)
+            prices.append(p_price)
+
+            # Create price history logs
+            for days_ago in [0, 3, 7, 30, 60, 90]:
+                hist_p = store_price + random.uniform(-store_price*0.05, store_price*0.05)
+                db.add(PriceHistory(
+                    store_name=store,
+                    price=round(hist_p, 2),
+                    product_id=p.id,
+                    recorded_at=datetime.utcnow() - timedelta(days=days_ago)
+                ))
+
+        db.commit()
+        db.refresh(p)
+
+        # Set final base_price and deal_score
+        p.base_price = min([pr.price for pr in prices])
+        from app.services.ai_service import AIService
+        p.deal_score = AIService.calculate_deal_score(prices, p.rating, p.reviews_count)
+        db.commit()
+        db.refresh(p)
+
+        new_products.append(p)
+
+    return new_products
