@@ -16,7 +16,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
 
   // Suggested brands
-  const brands = ["Gucci", "Prada", "Nike", "Balenciaga", "Rolex", "Zara", "Ralph Lauren"];
+  const brands = ["Gucci", "Prada", "Nike", "Zara", "Ralph Lauren", "Zudio", "Trends", "Meesho", "Myntra", "Amazon", "Flipkart"];
 
   useEffect(() => {
     async function fetchData() {
@@ -105,6 +105,30 @@ export default function Home() {
             gender: "women",
             brand: { id: 4, name: "Prada", logo_url: "" },
             category: { id: 4, name: "Bags", slug: "bags-handbags" }
+          },
+          {
+            id: 5,
+            title: "Zudio Casual V-Neck T-Shirt",
+            base_price: 1.80,
+            rating: 4.1,
+            reviews_count: 340,
+            deal_score: 82,
+            image_url: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=600&auto=format&fit=crop&q=80",
+            gender: "men",
+            brand: { id: 8, name: "Zudio", logo_url: "" },
+            category: { id: 2, name: "Hoodies & Sweatshirts", slug: "hoodies-sweatshirts" }
+          },
+          {
+            id: 6,
+            title: "Meesho Floral Printed Rayon Anarkali Kurta",
+            base_price: 3.60,
+            rating: 4.3,
+            reviews_count: 520,
+            deal_score: 87,
+            image_url: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=600&auto=format&fit=crop&q=80",
+            gender: "women",
+            brand: { id: 10, name: "Meesho", logo_url: "" },
+            category: { id: 3, name: "Dresses", slug: "dresses" }
           }
         ];
         setTrending(mockProducts);

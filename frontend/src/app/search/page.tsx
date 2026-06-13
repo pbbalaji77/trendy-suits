@@ -51,7 +51,7 @@ function SearchContent() {
   ];
 
   // Brands list
-  const brandOptions = ["Gucci", "Prada", "Nike", "Balenciaga", "Rolex", "Zara", "Ralph Lauren"];
+  const brandOptions = ["Gucci", "Prada", "Nike", "Balenciaga", "Rolex", "Zara", "Ralph Lauren", "Zudio", "Trends", "Meesho", "Myntra", "Amazon", "Flipkart"];
 
   // Fetch suggestions
   useEffect(() => {

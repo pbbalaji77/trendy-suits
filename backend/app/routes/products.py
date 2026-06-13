@@ -281,10 +281,10 @@ def generate_dynamic_products(q: str, db: Session) -> List[Product]:
 
     # 4. Generate 4 products covering different price tiers (Cheapest, Budget, Premium, Luxury)
     tiers = [
-        {"name": "Cheapest Value", "price_range": (100, 250), "brand_name": "Zara", "desc_prefix": "Super saver, budget friendly"},
-        {"name": "Budget Smart", "price_range": (300, 890), "brand_name": "Zara", "desc_prefix": "Affordable and stylish"},
-        {"name": "Premium Quality", "price_range": (1200, 3900), "brand_name": "Ralph Lauren", "desc_prefix": "High-quality, comfort-fit"},
-        {"name": "Luxury Designer", "price_range": (5000, 45000), "brand_name": "Gucci", "desc_prefix": "Exclusive couture"}
+        {"name": "Cheapest Value", "price_range": (1.2, 3.0), "brand_name": "Meesho", "desc_prefix": "Super saver, budget friendly"},
+        {"name": "Budget Smart", "price_range": (3.6, 10.7), "brand_name": "Zudio", "desc_prefix": "Affordable and stylish"},
+        {"name": "Premium Quality", "price_range": (14.4, 46.7), "brand_name": "Trends", "desc_prefix": "High-quality, comfort-fit"},
+        {"name": "Luxury Designer", "price_range": (60.0, 540.0), "brand_name": "Zara", "desc_prefix": "Exclusive boutique couture"}
     ]
 
     new_products = []
