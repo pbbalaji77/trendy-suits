@@ -41,12 +41,7 @@ export default function ProductComparisonPage() {
   }, [product]);
 
   const handleRedirect = (e: React.MouseEvent, url: string) => {
-    const token = window.localStorage.getItem("token");
-    if (!token) {
-      e.preventDefault();
-      alert("Please sign in or sign up to visit the store and buy products!");
-      router.push("/dashboard");
-    }
+    // Allow guest users to go directly to store products without authentication
   };
 
   const handleAddToWardrobe = () => {
